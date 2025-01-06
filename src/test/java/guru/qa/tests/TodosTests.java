@@ -40,7 +40,7 @@ public class TodosTests extends BaseTest {
         assertAll(
                 () -> assertFalse(todos.isEmpty()),
                 () -> assertEquals(
-                        90L,
+                        90,
                         todos.stream()
                                 .filter(Todo::completed)
                                 .count(),
