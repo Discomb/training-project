@@ -5,62 +5,46 @@ import jdk.jfr.Description;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
-import static io.restassured.RestAssured.given;
+import static guru.qa.helpers.TodosRequestHelper.*;
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TodosTests extends BaseTest {
 
     @Test
-    public void demoTest() {
+    @DisplayName("Get single todo")
+    @Description("Get single todo")
+    public void demoTest() throws IOException {
 
-        given()
-                .log().all()
-                .log().uri()
-                .when()
-                .get("/todos/1")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(200);
+        Todo singleTodo = getTodo(1, SC_OK);
     }
 
     @Test
+    @DisplayName("Get list of todos")
+    @Description("Get list of todos")
     public void checkAllTodos() {
 
-        given()
-                .log().all()
-                .log().uri()
-                .when()
-                .get("/todos")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(200);
+        List<Todo> todos = getTodosList(SC_OK);
     }
 
     @Test
     @DisplayName("Check completed todos")
     @Description("Check completed todos")
-    public void countCompletedTodos() {
+    public void checkCompletedTodos() {
 
-        List<Todo> todos = given()
-                .when()
-                .get("/todos")
-                .then()
-                .statusCode(200)
-                .extract()
-                .body()
-                .jsonPath()
-                .getList(".", Todo.class);
+        List<Todo> todos = getTodosList(SC_OK);
 
         assertAll(
+                () -> assertFalse(todos.isEmpty()),
                 () -> assertEquals(
                         90L,
                         todos.stream()
-                                .filter(e -> e.completed())
+                                .filter(Todo::completed)
                                 .count(),
                         "Numbers don't match"));
+
     }
 }

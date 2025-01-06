@@ -1,4 +1,4 @@
 package guru.qa.dtos.todos;
 
-public class Post {
+public record Post(int userId, int id, String title, String body) {
 }
